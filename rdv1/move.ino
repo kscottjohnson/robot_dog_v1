@@ -65,22 +65,31 @@ void testServos() {
 void moveDemo(){
   
   Serial.println("--------Demo");
+
+  //map left y axis to z hight
   Serial.print(ly); Serial.print(" ");
   float newZ = map(ly, 0, 255, 36, 75);
   Serial.println(newZ);
 
+  //map left x axis to y forward/backward
   Serial.print(lx); Serial.print(" ");
   float newY = map(lx, 0, 255, 15, -15);
   Serial.println(newY);
 
+  //map right x axis to roll
   Serial.print(rx); Serial.print(" ");
-  float newX = map(rx, 0, 255, -15, 15);
-  Serial.println(newX);
+  float newR = map(rx, 0, 255, -30, 30);
+  Serial.println(newR);
 
-  moveLeg(FRONT_RIGHT, newX, newY, newZ, 0, 0, 0);
-  moveLeg(FRONT_LEFT , newX, newY, newZ, 0, 0, 0);
-  moveLeg(BACK_RIGHT , newX, newY, newZ, 0, 0, 0);
-  moveLeg(BACK_LEFT  , newX, newY, newZ, 0, 0, 0);
+  //map right y axis to pitch
+  Serial.print(ry); Serial.print(" ");
+  float newP = map(ry, 0, 255, -30, 30);
+  Serial.println(newP);
+
+  moveLeg(FRONT_RIGHT, 0, newY, newZ, newR, newP, 0);
+  moveLeg(FRONT_LEFT , 0, newY, newZ, newR, newP, 0);
+  moveLeg(BACK_RIGHT , 0, newY, newZ, newR, newP, 0);
+  moveLeg(BACK_LEFT  , 0, newY, newZ, newR, newP, 0);
 }
 
 // static walking variables
