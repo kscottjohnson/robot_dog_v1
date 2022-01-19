@@ -42,26 +42,6 @@ void centerServos() {
   legs[BACK_LEFT].setDefault();
 }
 
-void testServos() {
-
-  int servos[6] = {0,1,2, 4,5,6}; 
-
-  for(int s=0; s<6; s++){
-    driverFront.setPWM(servos[s], 0, 420);
-    delay(500);
-    driverFront.setPWM(servos[s], 0, 400);
-    delay(500);
-  }
-
-  for(int s=0; s<6; s++){
-    driverBack.setPWM(servos[s], 0, 420);
-    delay(500);
-    driverBack.setPWM(servos[s], 0, 400);
-    delay(500);
-  }
-    
-}
-
 void moveDemo(){
   
   Serial.println("--------Demo");

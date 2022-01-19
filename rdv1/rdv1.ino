@@ -7,30 +7,29 @@
 #include "LegServo.h"
 
 // Servos
-Adafruit_PWMServoDriver driverBack = Adafruit_PWMServoDriver(0x40);
-Adafruit_PWMServoDriver driverFront = Adafruit_PWMServoDriver(0x41);
+Adafruit_PWMServoDriver driver= Adafruit_PWMServoDriver(0x40);
 #define SERVO_FREQ 50
 
 LegServo servos[12] = {  // 90 degrees 220 to 420; 
-  LegServo(&driverFront, 0, 325, 90), // Front Right
-  LegServo(&driverFront, 1, 253, 45),
-  LegServo(&driverFront, 2, 310, 90),
-  LegServo(&driverFront, 4, 330, 90), // Front Left
-  LegServo(&driverFront, 5, 370, 135),
-  LegServo(&driverFront, 6, 310, 90),
-  LegServo(&driverBack,  0, 305, 90), // Back Right
-  LegServo(&driverBack,  1, 268, 45),
-  LegServo(&driverBack,  2, 320, 90),
-  LegServo(&driverBack,  4, 325, 90), // Back Left
-  LegServo(&driverBack,  5, 387, 135),
-  LegServo(&driverBack,  6, 330, 90)
+  LegServo(&driver,  0, 310, 90), // Front Right
+  LegServo(&driver,  1, 240, 45),
+  LegServo(&driver,  2, 290, 90),
+  LegServo(&driver,  8, 302, 90), // Front Left
+  LegServo(&driver,  9, 345, 135),
+  LegServo(&driver, 10, 295, 90),
+  LegServo(&driver,  4, 300, 90), // Back Right
+  LegServo(&driver,  5, 260, 45),
+  LegServo(&driver,  6, 308, 90),
+  LegServo(&driver, 12, 315, 90), // Back Left
+  LegServo(&driver, 13, 375, 135),
+  LegServo(&driver, 14, 325, 90)
 };
 
 Leg legs[4] = {
-  Leg(&servos[0], &servos[1], &servos[2], true), // Front Right
-  Leg(&servos[3], &servos[4], &servos[5], false), // Front Left
-  Leg(&servos[6], &servos[7], &servos[8], true), // Back Right
-  Leg(&servos[9], &servos[10], &servos[11], false) // Back Left
+  Leg(&servos[0], &servos[1], &servos[2], true, true), // Front Right
+  Leg(&servos[3], &servos[4], &servos[5], true, false), // Front Left
+  Leg(&servos[6], &servos[7], &servos[8], false, true), // Back Right
+  Leg(&servos[9], &servos[10], &servos[11], false, false) // Back Left
 };
 
 #define FRONT_RIGHT 0
@@ -77,10 +76,8 @@ void setup() {
   pinMode(BUTTON_B, INPUT_PULLUP);
   pinMode(BUTTON_C, INPUT_PULLUP);
 
-  driverFront.begin();
-  driverBack.begin();
-  driverFront.setPWMFreq(SERVO_FREQ);
-  driverBack.setPWMFreq(SERVO_FREQ);
+  driver.begin();
+  driver.setPWMFreq(SERVO_FREQ);
   
   //setupDisplay();
 
