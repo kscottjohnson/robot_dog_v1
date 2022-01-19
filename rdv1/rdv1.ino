@@ -107,7 +107,7 @@ void loop() {
   Serial.print("Mode "); Serial.print(mode);
   if(mode == 0) moveDemo();
   else if(mode == 1) moveStaticWalk();
-  else if(mode == 2) moveDynamicWalk();
+  else if(mode == 2) legDemo();
 
   //robotBatt = smooth(robotBatt, readBatt(), 10);
   //getTelemetry();

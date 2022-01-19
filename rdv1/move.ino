@@ -45,28 +45,37 @@ void centerServos() {
 void moveDemo(){
   
   Serial.println("--------Demo");
+
+  //map left y axis to z hight
   Serial.print(ly); Serial.print(" ");
   float newZ = map(ly, 0, 255, 36, 75);
   Serial.println(newZ);
 
+  //map left x axis to y forward/backward
   Serial.print(lx); Serial.print(" ");
   float newY = map(lx, 0, 255, 15, -15);
   Serial.println(newY);
 
+  //map right x axis to roll
   Serial.print(rx); Serial.print(" ");
-  float newX = map(rx, 0, 255, -15, 15);
-  Serial.println(newX);
+  float newR = map(rx, 0, 255, -30, 30);
+  Serial.println(newR);
 
-  moveLeg(FRONT_RIGHT, newX, newY, newZ, 0, 0, 0);
-  moveLeg(FRONT_LEFT , newX, newY, newZ, 0, 0, 0);
-  moveLeg(BACK_RIGHT , newX, newY, newZ, 0, 0, 0);
-  moveLeg(BACK_LEFT  , newX, newY, newZ, 0, 0, 0);
+  //map right y axis to pitch
+  Serial.print(ry); Serial.print(" ");
+  float newP = map(ry, 0, 255, -30, 30);
+  Serial.println(newP);
+
+  moveLeg(FRONT_RIGHT, 0, newY, newZ, newR, newP, 0);
+  moveLeg(FRONT_LEFT , 0, newY, newZ, newR, newP, 0);
+  moveLeg(BACK_RIGHT , 0, newY, newZ, newR, newP, 0);
+  moveLeg(BACK_LEFT  , 0, newY, newZ, newR, newP, 0);
 }
 
 // static walking variables
 const int8_t sWalkX[] = {  0,  0,  0,  0,  0,  0,  0,  0,   0,  0,  0,  0,  0,  0,  0,  0};
 const int8_t sWalkY[] = {-21,  0, 21, 14,  7,  0, -7,-14, -21,  0, 21, 14,  7,  0, -7,-14};
-const int8_t sWalkZ[] = { 57, 52, 57, 57, 57, 57, 57, 57,  57, 52, 57, 57, 57, 57, 57, 57};
+const int8_t sWalkZ[] = { 57, 50, 57, 57, 57, 57, 57, 57,  57, 50, 57, 57, 57, 57, 57, 57};
 const int8_t sMaxSpeed = 4;
 int8_t sWalkSpeed; // cycles per second
 int8_t sTicksPerState;
@@ -127,8 +136,9 @@ void moveStaticWalk() {
         sPrevX[l] = sCurrentX[l];
         sPrevY[l] = sCurrentY[l];
         sPrevZ[l] = sCurrentZ[l];
-        if(sFirstStep && lState == 2){
-          sCurrentY[l] = 0; // hack to make first non-lifting leg not go forward
+        if(sFirstStep && (lState < 5)){
+          // hack to make non-lifting leg not go forward
+          sCurrentY[l] = 0; 
           sPrevY[l] = 0;
         }
       }
@@ -136,8 +146,9 @@ void moveStaticWalk() {
         sCurrentX[l] += (sWalkX[lState] - sPrevX[l]) / sTicksPerState;
         sCurrentY[l] += (sWalkY[lState] - sPrevY[l]) / sTicksPerState;
         sCurrentZ[l] += (sWalkZ[lState] - sPrevZ[l]) / sTicksPerState;
-        if(sFirstStep && lState == 2){
-          sCurrentY[l] = 0; // hack to make first non-lifting leg not go forward
+        if(sFirstStep && (lState < 5)){
+          // hack to make non-lifting leg not go forward
+          sCurrentY[l] = 0; 
         }
       }
       Serial.print(sWalkX[lState]); Serial.print("/");
@@ -165,4 +176,22 @@ void moveStaticWalk() {
 
 void moveDynamicWalk() {
   Serial.println("--------Dynamic Walk");
+}
+
+
+void legDemo(){
+  
+  Serial.println("--------Leg Demo");
+
+  //map left y axis to z hight
+  Serial.print(ly); Serial.print(" ");
+  float newZ = map(ly, 0, 255, 67, 47);
+  Serial.println(newZ);
+
+  //map right x axis to roll
+  Serial.print(rx); Serial.print(" ");
+  float newR = map(rx, 0, 255, -20, 20);
+  Serial.println(newR);
+
+  moveLeg(BACK_LEFT, 0, newR, newZ, 0, 0, 0);
 }
