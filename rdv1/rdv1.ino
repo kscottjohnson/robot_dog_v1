@@ -19,7 +19,7 @@ LegServo servos[12] = {  // 90 degrees 220 to 420;
   LegServo(&driverFront, 5, 370, 135),
   LegServo(&driverFront, 6, 310, 90),
   LegServo(&driverBack,  0, 305, 90), // Back Right
-  LegServo(&driverBack,  1, 263, 45),
+  LegServo(&driverBack,  1, 268, 45),
   LegServo(&driverBack,  2, 320, 90),
   LegServo(&driverBack,  4, 325, 90), // Back Left
   LegServo(&driverBack,  5, 387, 135),
@@ -110,7 +110,7 @@ void loop() {
   Serial.print("Mode "); Serial.print(mode);
   if(mode == 0) moveDemo();
   else if(mode == 1) moveStaticWalk();
-  else if(mode == 2) moveDynamicWalk();
+  else if(mode == 2) legDemo();
 
   //robotBatt = smooth(robotBatt, readBatt(), 10);
   //getTelemetry();
