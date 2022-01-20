@@ -22,7 +22,6 @@ void moveLeg(int legNum, float x, float y, float z, float roll, float pitch, flo
 
   // shoulder and knee given Y leg length
   float s2 = acos((legLenY*legLenY)/(2*FEMUR*legLenY)) * RAD_TO_DEG;
-  //float kneeAngle = 180 - (acos((2*FEMUR*FEMUR-legLenY*legLenY)/(2*FEMUR*FEMUR)) * RAD_TO_DEG);
   float kneeAngle = 180 - (180 - 2 * s2);
 
   float shoulderAngle = s1+s2;
@@ -73,9 +72,12 @@ void moveDemo(){
 }
 
 // static walking variables
+//const int8_t sWalkY[] = {-21,  0, 21, 14,  7,  0, -7,-14, -21,  0, 21, 14,  7,  0, -7,-14};
+//const int8_t sWalkZ[] = { 56, 52, 56, 56, 56, 56, 56, 56,  56, 52, 56, 56, 56, 56, 56, 56};
+
 const int8_t sWalkX[] = {  0,  0,  0,  0,  0,  0,  0,  0,   0,  0,  0,  0,  0,  0,  0,  0};
-const int8_t sWalkY[] = {-21,  0, 21, 14,  7,  0, -7,-14, -21,  0, 21, 14,  7,  0, -7,-14};
-const int8_t sWalkZ[] = { 57, 50, 57, 57, 57, 57, 57, 57,  57, 50, 57, 57, 57, 57, 57, 57};
+const int8_t sWalkY[] = {-15,  0, 15, 10,  5,  0, -5,-10, -15,  0, 15, 10,  5,  0, -5,-10};
+const int8_t sWalkZ[] = { 56, 52, 56, 56, 56, 56, 56, 58,  56, 52, 56, 56, 56, 56, 56, 58};
 const int8_t sMaxSpeed = 4;
 int8_t sWalkSpeed; // cycles per second
 int8_t sTicksPerState;
@@ -83,7 +85,7 @@ int8_t sTick = 0;
 int8_t sWalkState;
 float sCurrentX[4], sCurrentY[4], sCurrentZ[4];
 float    sPrevX[4],    sPrevY[4],    sPrevZ[4];
-const uint8_t legOrder[4] = {0,2,1,3};
+const uint8_t legOrder[4] = {2,0,3,1};
 bool sFirstStep = true;
 int8_t sDirection = 1; // 1 forward, -1 reverse
 
@@ -114,11 +116,11 @@ void moveStaticWalk() {
     for(int l=0; l<4; l++){
       sCurrentX[l] = 0;
       sCurrentY[l] = 0;
-      sCurrentZ[l] = 57;
+      sCurrentZ[l] = 56;
       sPrevX[l] = 0;
       sPrevY[l] = 0;
-      sPrevZ[l] = 57;
-      moveLeg(l, 0, 0, 57, 0, 0, 0);
+      sPrevZ[l] = 56;
+      moveLeg(l, 0, 0, 56, 0, 0, 0);
     }
     sTick = 0;
     sFirstStep = true;

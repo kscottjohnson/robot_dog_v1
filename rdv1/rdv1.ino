@@ -11,16 +11,16 @@ Adafruit_PWMServoDriver driver= Adafruit_PWMServoDriver(0x40);
 #define SERVO_FREQ 50
 
 LegServo servos[12] = {  // 90 degrees 220 to 420; 
-  LegServo(&driver,  0, 310, 90), // Front Right
+  LegServo(&driver,  0, 307, 90), // Front Right
   LegServo(&driver,  1, 240, 45),
   LegServo(&driver,  2, 290, 90),
   LegServo(&driver,  8, 302, 90), // Front Left
-  LegServo(&driver,  9, 345, 135),
-  LegServo(&driver, 10, 295, 90),
+  LegServo(&driver,  9, 342, 135),
+  LegServo(&driver, 10, 292, 90),
   LegServo(&driver,  4, 300, 90), // Back Right
   LegServo(&driver,  5, 260, 45),
   LegServo(&driver,  6, 308, 90),
-  LegServo(&driver, 12, 315, 90), // Back Left
+  LegServo(&driver, 12, 312, 90), // Back Left
   LegServo(&driver, 13, 375, 135),
   LegServo(&driver, 14, 325, 90)
 };
