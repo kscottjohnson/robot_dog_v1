@@ -18,18 +18,18 @@ LegServo servos[12] = {  // 90 degrees 220 to 420;
   LegServo(&driver,  9, 342, 135),
   LegServo(&driver, 10, 292, 90),
   LegServo(&driver,  4, 300, 90), // Back Right
-  LegServo(&driver,  5, 260, 45),
-  LegServo(&driver,  6, 308, 90),
+  LegServo(&driver,  5, 368, 135),
+  LegServo(&driver,  6, 306, 90),
   LegServo(&driver, 12, 312, 90), // Back Left
-  LegServo(&driver, 13, 375, 135),
-  LegServo(&driver, 14, 325, 90)
+  LegServo(&driver, 13, 262, 45),
+  LegServo(&driver, 14, 323, 90)
 };
 
 Leg legs[4] = {
-  Leg(&servos[0], &servos[1], &servos[2], true, true), // Front Right
-  Leg(&servos[3], &servos[4], &servos[5], true, false), // Front Left
-  Leg(&servos[6], &servos[7], &servos[8], false, true), // Back Right
-  Leg(&servos[9], &servos[10], &servos[11], false, false) // Back Left
+  Leg(&servos[0], &servos[1], &servos[2], true, true, false), // Front Right
+  Leg(&servos[3], &servos[4], &servos[5], true, false, false), // Front Left
+  Leg(&servos[6], &servos[7], &servos[8], false, false, true), // Back Right
+  Leg(&servos[9], &servos[10], &servos[11], false, true, true) // Back Left
 };
 
 #define FRONT_RIGHT 0

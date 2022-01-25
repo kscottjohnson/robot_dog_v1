@@ -2,6 +2,10 @@ void moveLeg(int legNum, float x, float y, float z, float roll, float pitch, flo
   Leg* leg = &legs[legNum]; 
   //Serial.print("Leg "); Serial.println(legNum);
 
+  if(leg->isReversed()) { // flip y if leg is reversed
+    y = -1 * y;
+  }
+
   // get leg length on X plane
   float legLenX = sqrt(x*x+z*z);
 
@@ -77,7 +81,7 @@ void moveDemo(){
 
 const int8_t sWalkX[] = {  0,  0,  0,  0,  0,  0,  0,  0,   0,  0,  0,  0,  0,  0,  0,  0};
 const int8_t sWalkY[] = {-15,  0, 15, 10,  5,  0, -5,-10, -15,  0, 15, 10,  5,  0, -5,-10};
-const int8_t sWalkZ[] = { 56, 52, 56, 56, 56, 56, 56, 58,  56, 52, 56, 56, 56, 56, 56, 58};
+const int8_t sWalkZ[] = { 56, 52, 56, 56, 56, 56, 56, 56,  56, 52, 56, 56, 56, 56, 56, 56};
 const int8_t sMaxSpeed = 4;
 int8_t sWalkSpeed; // cycles per second
 int8_t sTicksPerState;
@@ -185,15 +189,17 @@ void legDemo(){
   
   Serial.println("--------Leg Demo");
 
-  //map left y axis to z hight
-  Serial.print(ly); Serial.print(" ");
-  float newZ = map(ly, 0, 255, 67, 47);
-  Serial.println(newZ);
+  float height = map(ly, 0, 255, 67, 47);
+  moveLeg(FRONT_LEFT, 0, 0, height, 0, 0, 0);
 
-  //map right x axis to roll
-  Serial.print(rx); Serial.print(" ");
-  float newR = map(rx, 0, 255, -20, 20);
-  Serial.println(newR);
+  height = map(ry, 0, 255, 67, 47);
+  moveLeg(FRONT_RIGHT, 0, 0, height, 0, 0, 0);
 
-  moveLeg(BACK_LEFT, 0, newR, newZ, 0, 0, 0);
+  height = map(lx, 0, 255, 67, 47);
+  moveLeg(BACK_LEFT, 0, 0, height, 0, 0, 0);
+
+  height = map(rx, 0, 255, 67, 47);
+  moveLeg(BACK_RIGHT, 0, 0, height, 0, 0, 0);
+  
+  
 }
