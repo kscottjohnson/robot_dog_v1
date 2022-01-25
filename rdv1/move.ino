@@ -6,6 +6,15 @@ void moveLeg(int legNum, float x, float y, float z, float roll, float pitch, flo
     y = -1 * y;
   }
 
+  // roll adjust h' = CHASSIS_W / 2 * sin(roll)
+  float rollZAdj = CHASSIS_W / 2.0 * sin(roll * DEG_TO_RAD);
+  if(legNum == 0 || legNum == 2){ 
+    z += rollZAdj;
+  }
+  else{
+    z -= rollZAdj;
+  }
+
   // get leg length on X plane
   float legLenX = sqrt(x*x+z*z);
 
@@ -14,6 +23,7 @@ void moveLeg(int legNum, float x, float y, float z, float roll, float pitch, flo
   if(x != 0){ // check for zero x and set angle otherwise
     hipAngle = acos((legLenX*legLenX+x*x-z*z)/(2*x*legLenX))*RAD_TO_DEG;
   }
+  hipAngle -= roll;
 
   // get leg length on Y plane
   float legLenY = sqrt(y*y+legLenX*legLenX);
@@ -61,12 +71,12 @@ void moveDemo(){
 
   //map right x axis to roll
   Serial.print(rx); Serial.print(" ");
-  float newR = map(rx, 0, 255, -30, 30);
+  float newR = map(rx, 0, 255, 30, -30);
   Serial.println(newR);
 
   //map right y axis to pitch
   Serial.print(ry); Serial.print(" ");
-  float newP = map(ry, 0, 255, -30, 30);
+  float newP = map(ry, 0, 255, 30, -30);
   Serial.println(newP);
 
   moveLeg(FRONT_RIGHT, 0, newY, newZ, newR, newP, 0);
