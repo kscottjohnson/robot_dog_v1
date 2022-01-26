@@ -65,8 +65,10 @@ float hipAngle[4];
 float shoulderAngle[4];
 float kneeAngle[4];
 
+#define CHASSIS_L 114
+#define CHASSIS_W 62
 #define FEMUR 40
-#define CLOCK_CYCLE 5
+#define CLOCK_CYCLE 10
 
 void setup() {
   Serial.begin(115200);
