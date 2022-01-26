@@ -58,7 +58,7 @@ void setup() {
 
 void loop() {
   currentMs = millis();
-  if(currentMs - prevMs < 100) return;
+  if(currentMs - prevMs < 50) return;
   prevMs = currentMs;
 
   if(!digitalRead(BUTTON_A)){

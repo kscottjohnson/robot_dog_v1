@@ -2,19 +2,31 @@ void moveLeg(int legNum, float x, float y, float z, float roll, float pitch, flo
   Leg* leg = &legs[legNum]; 
   //Serial.print("Leg "); Serial.println(legNum);
 
-  if(leg->isReversed()) { // flip y if leg is reversed
-    y = -1 * y;
-  }
-
-  // roll adjust h' = CHASSIS_W / 2 * sin(roll)
+  // roll adjust 
   float rollZAdj = CHASSIS_W / 2.0 * sin(roll * DEG_TO_RAD);
-  if(legNum == 0 || legNum == 2){ 
+  if(legNum == 0 || legNum == 2){ // right legs
     z += rollZAdj;
   }
   else{
     z -= rollZAdj;
   }
 
+  // pitch adjust 
+  float pitchZAdj = CHASSIS_L / 2.0 * sin(pitch * DEG_TO_RAD);
+  //Serial.print(pitchZAdj);Serial.print(" ");
+  if(legNum == 0 || legNum == 1){ // front legs
+    z += pitchZAdj;
+  }
+  else {
+    z -= pitchZAdj;
+  }
+  //Serial.println(z);
+
+  if(leg->isReversed()) { // flip y and pitch if leg is reversed
+    y *= -1;
+    pitch *= -1;
+  }
+  
   // get leg length on X plane
   float legLenX = sqrt(x*x+z*z);
 
@@ -23,7 +35,7 @@ void moveLeg(int legNum, float x, float y, float z, float roll, float pitch, flo
   if(x != 0){ // check for zero x and set angle otherwise
     hipAngle = acos((legLenX*legLenX+x*x-z*z)/(2*x*legLenX))*RAD_TO_DEG;
   }
-  hipAngle -= roll;
+  hipAngle -= roll; // add roll degrees
 
   // get leg length on Y plane
   float legLenY = sqrt(y*y+legLenX*legLenX);
@@ -38,7 +50,8 @@ void moveLeg(int legNum, float x, float y, float z, float roll, float pitch, flo
   float s2 = acos((legLenY*legLenY)/(2*FEMUR*legLenY)) * RAD_TO_DEG;
   float kneeAngle = 180 - (180 - 2 * s2);
 
-  float shoulderAngle = s1+s2;
+  //Serial.print(s1);Serial.print(" ");Serial.print(s2);Serial.print(" ");Serial.println(pitch);
+  float shoulderAngle = s1+s2+pitch;
 
   //Serial.print("Angles: ");
   //Serial.print(hipAngle); Serial.print(" ");
@@ -76,7 +89,7 @@ void moveDemo(){
 
   //map right y axis to pitch
   Serial.print(ry); Serial.print(" ");
-  float newP = map(ry, 0, 255, 30, -30);
+  float newP = map(ry, 0, 255, 20, -20);
   Serial.println(newP);
 
   moveLeg(FRONT_RIGHT, 0, newY, newZ, newR, newP, 0);
