@@ -35,7 +35,7 @@ void moveLeg(int legNum, float x, float y, float z, float roll, float pitch, flo
   if(x != 0){ // check for zero x and set angle otherwise
     hipAngle = acos((legLenX*legLenX+x*x-z*z)/(2*x*legLenX))*RAD_TO_DEG;
   }
-  hipAngle -= roll; // add roll degrees
+  hipAngle += roll; // add roll degrees
 
   // get leg length on Y plane
   float legLenY = sqrt(y*y+legLenX*legLenX);
@@ -82,31 +82,48 @@ void moveDemo(){
   float newY = map(lx, 0, 255, 15, -15);
   Serial.println(newY);
 
+  float newR = 0;
   //map right x axis to roll
   Serial.print(rx); Serial.print(" ");
-  float newR = map(rx, 0, 255, 30, -30);
+  newR = map(rx, 0, 255, 30, -30);
   Serial.println(newR);
+
+  float newX = 0;
+  //map right x axis to x adjust
+  //Serial.print(rx); Serial.print(" ");
+  //newX = map(rx, 0, 255, -10, 10);
+  //Serial.println(newX);
 
   //map right y axis to pitch
   Serial.print(ry); Serial.print(" ");
   float newP = map(ry, 0, 255, 20, -20);
   Serial.println(newP);
 
-  moveLeg(FRONT_RIGHT, 0, newY, newZ, newR, newP, 0);
-  moveLeg(FRONT_LEFT , 0, newY, newZ, newR, newP, 0);
-  moveLeg(BACK_RIGHT , 0, newY, newZ, newR, newP, 0);
-  moveLeg(BACK_LEFT  , 0, newY, newZ, newR, newP, 0);
+  moveLeg(FRONT_RIGHT, newX, newY, newZ, newR, newP, 0);
+  moveLeg(FRONT_LEFT , newX, newY, newZ, newR, newP, 0);
+  moveLeg(BACK_RIGHT , newX, newY, newZ, newR, newP, 0);
+  moveLeg(BACK_LEFT  , newX, newY, newZ, newR, newP, 0);
 }
 
-// static walking variables
-//const int8_t sWalkY[] = {-21,  0, 21, 14,  7,  0, -7,-14, -21,  0, 21, 14,  7,  0, -7,-14};
-//const int8_t sWalkZ[] = { 56, 52, 56, 56, 56, 56, 56, 56,  56, 52, 56, 56, 56, 56, 56, 56};
-
+// static walk global vars
 const int8_t sWalkX[] = {  0,  0,  0,  0,  0,  0,  0,  0,   0,  0,  0,  0,  0,  0,  0,  0};
 const int8_t sWalkY[] = {-15,  0, 15, 10,  5,  0, -5,-10, -15,  0, 15, 10,  5,  0, -5,-10};
 const int8_t sWalkZ[] = { 56, 52, 56, 56, 56, 56, 56, 56,  56, 52, 56, 56, 56, 56, 56, 56};
 const int8_t sMaxSpeed = 4;
 int8_t sWalkSpeed; // cycles per second
+int8_t sSteer; // 1=right, 0=none, -1=left
+const float sSpinX[4][8] = {{-10.4,  0.0,  9.4,  6.4,  3.3,  0.0, -3.4, -6.8},
+                            {  3.4,  0.0, -3.3, -6.4, -9.4,  0.0, 10.4,  6.8},
+                            {-10.4, -6.8, -3.4,  0.0,  3.3,  6.4,  9.4,  0.0},
+                            {  3.4,  6.8, 10.4,  0.0, -9.4, -6.4, -3.3,  0.0}};
+const float sSpinY[4][8] = {{  4.5,  0.0, -6.2, -4.0, -1.9,  0.0,  1.7,  3.2},
+                            {  1.7,  0.0, -1.9, -4.0, -6.2,  0.0,  4.5,  3.2},
+                            { -4.5, -3.2, -1.7,  0.0,  1.9,  4.0,  6.2,  0.0},
+                            { -1.7, -3.2, -4.5,  0.0,  6.2,  4.0,  1.9,  0.0}};
+const float sSpinZ[4][8] = {{ 56.0, 52.0, 56.0, 56.0, 56.0, 56.0, 56.0, 56.0},
+                            { 56.0, 56.0, 56.0, 56.0, 56.0, 52.0, 56.0, 56.0},
+                            { 56.0, 56.0, 56.0, 56.0, 56.0, 56.0, 56.0, 52.0},
+                            { 56.0, 56.0, 56.0, 52.0, 56.0, 56.0, 56.0, 56.0}};
 int8_t sTicksPerState;
 int8_t sTick = 0;
 int8_t sWalkState;
@@ -119,9 +136,10 @@ int8_t sDirection = 1; // 1 forward, -1 reverse
 void moveStaticWalk() {
   if(sTick == 0){ // update walk speed at start of cycle
     Serial.println("--------Static Walk");
-    //Serial.print(ly); Serial.print(" ");
+    //Serial.print(rx); Serial.print(" ");
     sWalkSpeed = map(ly, 0, 255, -1 * sMaxSpeed, sMaxSpeed);
-    //Serial.print(sWalkSpeed); Serial.print(" ");
+    sSteer = map(rx, 0, 230 , -1, 1);
+    //Serial.println(sSteer);
     if(sWalkSpeed != 0){
       sTicksPerState =  (float) sMaxSpeed / abs(sWalkSpeed) * 16;
       if(sWalkSpeed > 0){
@@ -132,25 +150,65 @@ void moveStaticWalk() {
       }
     }
     else {
-      sTicksPerState = 1;
+      sTicksPerState = 16; // for stationary spin
     }
     //Serial.println(sTicksPerState);
   }
 
-  if(sWalkSpeed == 0){ // stopped
-    Serial.println("Stopped");
-    sWalkState = 0;
-    for(int l=0; l<4; l++){
-      sCurrentX[l] = 0;
-      sCurrentY[l] = 0;
-      sCurrentZ[l] = 56;
-      sPrevX[l] = 0;
-      sPrevY[l] = 0;
-      sPrevZ[l] = 56;
-      moveLeg(l, 0, 0, 56, 0, 0, 0);
+  if(sWalkSpeed == 0){ // stopped    
+    if(sSteer == 0){ // no spin
+      Serial.println("Stopped");
+      sWalkState = 0;
+      for(int l=0; l<4; l++){
+        sCurrentX[l] = 0;
+        sCurrentY[l] = 0;
+        sCurrentZ[l] = 56;
+        sPrevX[l] = 0;
+        sPrevY[l] = 0;
+        sPrevZ[l] = 56;
+        moveLeg(l, 0, 0, 56, 0, 0, 0);
+      }
+      sTick = 0;
+      sFirstStep = true;
     }
-    sTick = 0;
-    sFirstStep = true;
+    else{ // spinning
+      Serial.print("Spin ");Serial.print(sSteer);Serial.print(" State "); Serial.print(sWalkState); Serial.print(" Tick "); Serial.print(sTick);Serial.print(" ");
+      for(int l=0; l<4; l++){
+        if(sTick + 1 == sTicksPerState){ // if this is the last tick just set the targets
+          sCurrentX[l] = sSpinX[l][sWalkState];
+          sCurrentY[l] = sSpinY[l][sWalkState];
+          sCurrentZ[l] = sSpinZ[l][sWalkState];
+          sPrevX[l] = sCurrentX[l];
+          sPrevY[l] = sCurrentY[l];
+          sPrevZ[l] = sCurrentZ[l];
+        }
+        else{
+          sCurrentX[l] += (sSpinX[l][sWalkState] - sPrevX[l]) / sTicksPerState;
+          sCurrentY[l] += (sSpinY[l][sWalkState] - sPrevY[l]) / sTicksPerState;
+          sCurrentZ[l] += (sSpinZ[l][sWalkState] - sPrevZ[l]) / sTicksPerState;
+        }
+        
+        moveLeg(l, sCurrentX[l], sCurrentY[l], sCurrentZ[l], 0, 0, 0);
+        //Serial.print(sSpinX[l][sWalkState]); Serial.print("/");
+        //Serial.print(sCurrentX[l]); Serial.print(" ");
+        //Serial.print(sSpinY[l][sWalkState]); Serial.print("/");
+        //Serial.print(sCurrentY[l]); Serial.print(" ");
+        //Serial.print(sSpinZ[l][sWalkState]); Serial.print("/");
+        //Serial.print(sCurrentZ[l]); Serial.println(" ");
+      }
+      
+      if(++sTick == sTicksPerState){ // new state
+        sTick = 0;
+        sFirstStep = false;
+        sWalkState += sSteer;
+        if(sWalkState == 8){ // new cycle
+          sWalkState = 0;
+        }
+        else if(sWalkState == -1){ // new cycle
+          sWalkState = 7;
+        }
+      }
+    }
   }
   else{ // moving
     Serial.print("Moving State: "); Serial.print(sWalkState); Serial.print(" Tick: "); Serial.print(sTick);
@@ -180,12 +238,12 @@ void moveStaticWalk() {
           sCurrentY[l] = 0; 
         }
       }
-      Serial.print(sWalkX[lState]); Serial.print("/");
-      Serial.print(sCurrentX[l]); Serial.print(" ");
-      Serial.print(sWalkY[lState]); Serial.print("/");
-      Serial.print(sCurrentY[l]); Serial.print(" ");
-      Serial.print(sWalkZ[lState]); Serial.print("/");
-      Serial.print(sCurrentZ[l]); Serial.println(" ");
+      //Serial.print(sWalkX[lState]); Serial.print("/");
+      //Serial.print(sCurrentX[l]); Serial.print(" ");
+      //Serial.print(sWalkY[lState]); Serial.print("/");
+      //Serial.print(sCurrentY[l]); Serial.print(" ");
+      //Serial.print(sWalkZ[lState]); Serial.print("/");
+      //Serial.print(sCurrentZ[l]); Serial.println(" ");
       moveLeg(l, sCurrentX[l], sCurrentY[l], sCurrentZ[l], 0, 0, 0);
     }
     
