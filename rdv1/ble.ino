@@ -1,3 +1,5 @@
+// Bluetooh Low Energy communication functions
+
 void startBleAdv(){
   Bluefruit.begin(1, 0);
   Bluefruit.Periph.setConnectCallback(prph_connect_callback);

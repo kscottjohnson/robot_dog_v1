@@ -1,3 +1,5 @@
+// Leg movement and walking algorithms
+
 void moveLeg(int legNum, float x, float y, float z, float roll, float pitch, float yaw) {
   Leg* leg = &legs[legNum]; 
   //Serial.print("Leg "); Serial.println(legNum);
