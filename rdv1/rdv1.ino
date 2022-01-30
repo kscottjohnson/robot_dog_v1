@@ -26,10 +26,10 @@ LegServo servos[12] = {  // 90 degrees 220 to 420;
 };
 
 Leg legs[4] = {
-  Leg(&servos[0], &servos[1], &servos[2], true, true, false), // Front Right
-  Leg(&servos[3], &servos[4], &servos[5], true, false, false), // Front Left
-  Leg(&servos[6], &servos[7], &servos[8], false, false, true), // Back Right
-  Leg(&servos[9], &servos[10], &servos[11], false, true, true) // Back Left
+  Leg(&servos[0], &servos[1], &servos[2], false, true, false), // Front Right
+  Leg(&servos[3], &servos[4], &servos[5], false, false, false), // Front Left
+  Leg(&servos[6], &servos[7], &servos[8], true, false, true), // Back Right
+  Leg(&servos[9], &servos[10], &servos[11], true, true, true) // Back Left
 };
 
 #define FRONT_RIGHT 0
@@ -106,7 +106,7 @@ void loop() {
   if((currentMs - connectedMs) < 1000){ // wait a second after connecting
     return;
   }
-  Serial.print("Mode "); Serial.print(mode);
+  //Serial.print("Mode "); Serial.print(mode);
   if(mode == 0) moveDemo();
   else if(mode == 1) moveStaticWalk();
   else if(mode == 2) legDemo();
