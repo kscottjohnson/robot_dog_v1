@@ -1,3 +1,5 @@
+// Display used for debugging.  Usually commented out in main loop
+
 void setupDisplay() {
   display.begin(0x3C, true); // Address 0x3C default
   display.clearDisplay();

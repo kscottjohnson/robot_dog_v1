@@ -7,7 +7,7 @@
 #include "LegServo.h"
 
 // Servos
-Adafruit_PWMServoDriver driver= Adafruit_PWMServoDriver(0x40);
+Adafruit_PWMServoDriver driver = Adafruit_PWMServoDriver(0x40);
 #define SERVO_FREQ 50
 
 LegServo servos[12] = {  // 90 degrees 220 to 420; 

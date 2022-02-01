@@ -1,3 +1,5 @@
+// info sent back to remote.  no longer works with PowerBoost 1000
+
 void getTelemetry() {
   robotMsg[0] = robotBatt;
 }
