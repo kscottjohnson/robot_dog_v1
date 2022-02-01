@@ -1,6 +1,25 @@
-// info sent back to remote.  no longer works with PowerBoost 1000
+// gathers data about the robot
 
-void getTelemetry() {
+void getIMUdata() {
+  imu.getEvent(&accel, &gyro, &temp);
+  accel_x = accel.acceleration.x;
+  accel_y = accel.acceleration.y;
+  accel_z = accel.acceleration.z;
+  gyro_x = gyro.gyro.x;
+  gyro_y = gyro.gyro.y;
+  gyro_z = gyro.gyro.z;
+  Serial.print("Accel: ");
+  Serial.print(accel_x);Serial.print(" ");
+  Serial.print(accel_y);Serial.print(" ");
+  Serial.print(accel_z);
+  Serial.println(" m/s^2");
+  Serial.print("Gyro: ");
+  Serial.print(gyro_x);Serial.print(" ");
+  Serial.print(gyro_y);Serial.print(" ");
+  Serial.println(gyro_z);
+}
+
+void getRemoteTelemetry() {
   robotMsg[0] = robotBatt;
 }
 

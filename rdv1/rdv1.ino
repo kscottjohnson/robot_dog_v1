@@ -4,6 +4,7 @@
 #include <Adafruit_SH110X.h>
 #include <bluefruit.h>
 #include <Adafruit_PWMServoDriver.h>
+#include <Adafruit_LSM6DS33.h>
 #include "LegServo.h"
 
 // Servos
@@ -45,6 +46,14 @@ uint8_t robotMsg[1] = {0};
 // LCD
 Adafruit_SH1107 display = Adafruit_SH1107(64, 128, &Wire);
 
+// IMU
+Adafruit_LSM6DS33 imu;
+sensors_event_t accel;
+sensors_event_t gyro;
+sensors_event_t temp;
+float accel_x, accel_y, accel_z;
+float gyro_x, gyro_y, gyro_z;
+
 #define BUTTON_A  9
 #define BUTTON_B  6
 #define BUTTON_C  5
@@ -78,6 +87,8 @@ void setup() {
   pinMode(BUTTON_B, INPUT_PULLUP);
   pinMode(BUTTON_C, INPUT_PULLUP);
 
+  imu.begin_I2C();
+
   driver.begin();
   driver.setPWMFreq(SERVO_FREQ);
   
@@ -106,13 +117,16 @@ void loop() {
   if((currentMs - connectedMs) < 1000){ // wait a second after connecting
     return;
   }
+
+  getIMUdata();
+  
   //Serial.print("Mode "); Serial.print(mode);
   if(mode == 0) moveDemo();
   else if(mode == 1) moveStaticWalk();
   else if(mode == 2) legDemo();
 
   //robotBatt = smooth(robotBatt, readBatt(), 10);
-  //getTelemetry();
+  //getRemoteTelemetry();
   //refreshDisplay();
-  //sendTelemetry();
+  //sendRemoteTelemetry();
 }

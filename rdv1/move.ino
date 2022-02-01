@@ -72,23 +72,23 @@ void centerServos() {
 
 void moveDemo(){
   
-  Serial.println("--------Demo");
+  //Serial.println("--------Demo");
 
   //map left y axis to z hight
-  Serial.print(ly); Serial.print(" ");
+  //Serial.print(ly); Serial.print(" ");
   float newZ = map(ly, 0, 255, 36, 75);
-  Serial.println(newZ);
+  //Serial.println(newZ);
 
   //map left x axis to y forward/backward
-  Serial.print(lx); Serial.print(" ");
+  //Serial.print(lx); Serial.print(" ");
   float newY = map(lx, 0, 255, 15, -15);
-  Serial.println(newY);
+  //Serial.println(newY);
 
   float newR = 0;
   //map right x axis to roll
-  Serial.print(rx); Serial.print(" ");
+  //Serial.print(rx); Serial.print(" ");
   newR = map(rx, 0, 255, 30, -30);
-  Serial.println(newR);
+  //Serial.println(newR);
 
   float newX = 0;
   //map right x axis to x adjust
@@ -97,9 +97,9 @@ void moveDemo(){
   //Serial.println(newX);
 
   //map right y axis to pitch
-  Serial.print(ry); Serial.print(" ");
+  //Serial.print(ry); Serial.print(" ");
   float newP = map(ry, 0, 255, 20, -20);
-  Serial.println(newP);
+  //Serial.println(newP);
 
   moveLeg(FRONT_RIGHT, newX, newY, newZ, newR, newP, 0);
   moveLeg(FRONT_LEFT , newX, newY, newZ, newR, newP, 0);
