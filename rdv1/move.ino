@@ -108,9 +108,11 @@ void moveDemo(){
 }
 
 // static walk global vars
-const int8_t sWalkX[] = {  0,  0,  0,  0,  0,  0,  0,  0,   0,  0,  0,  0,  0,  0,  0,  0};
-const int8_t sWalkY[] = {-15,  0, 15, 10,  5,  0, -5,-10, -15,  0, 15, 10,  5,  0, -5,-10};
-const int8_t sWalkZ[] = { 56, 52, 56, 56, 56, 56, 56, 56,  56, 52, 56, 56, 56, 56, 56, 56};
+const int8_t sWalkX[] =       {  0,  0,  0,  0,  0,  0,  0,  0,   0,  0,  0,  0,  0,  0,  0,  0};
+const int8_t sWalkY[] =       {-15,  0, 15, 10,  5,  0, -5,-10, -15,  0, 15, 10,  5,  0, -5,-10};
+const int8_t sWalkZ[] =       { 56, 52, 56, 56, 56, 56, 56, 56,  56, 52, 56, 56, 56, 56, 56, 56};
+const int8_t sWalkXright[] =  { -6,  0,  6,  4,  2,  0, -2, -4,  -6,  0,  6,  4,  2,  0, -2, -4};
+const int8_t sWalkXleft[] =   {  6,  0, -6, -4, -2,  0,  2,  4,   6,  0, -6, -4, -2,  0,  2,  4};
 const int8_t sMaxSpeed = 4;
 int8_t sWalkSpeed; // cycles per second
 int8_t sSteer; // 1=right, 0=none, -1=left
@@ -217,9 +219,27 @@ void moveStaticWalk() {
     Serial.print(" Speed: "); Serial.println(sWalkSpeed);
     for(int l=0; l<4; l++){
       int lState = sWalkState + legOrder[l]*2; //offset each leg through the states
+
+      const int8_t* sWalkXdyanmic = sWalkX;
+      if(sSteer == 1){ // turning right
+        if(l == 0 || l == 1){ // front legs right
+          sWalkXdyanmic = sWalkXright;
+        }
+        else{ // back legs left
+          sWalkXdyanmic = sWalkXleft;
+        }
+      }
+      else if(sSteer == -1){ // turning left
+        if(l == 0 || l == 1){ // front legs left
+          sWalkXdyanmic = sWalkXleft;
+        }
+        else{ // back legs right
+          sWalkXdyanmic = sWalkXright;
+        }
+      }
       
       if(sTick + 1 == sTicksPerState){ // if this is the last tick just set the targets
-        sCurrentX[l] = sWalkX[lState];
+        sCurrentX[l] = sWalkXdyanmic[lState];
         sCurrentY[l] = sWalkY[lState];
         sCurrentZ[l] = sWalkZ[lState];
         sPrevX[l] = sCurrentX[l];
@@ -232,7 +252,7 @@ void moveStaticWalk() {
         }
       }
       else{
-        sCurrentX[l] += (sWalkX[lState] - sPrevX[l]) / sTicksPerState;
+        sCurrentX[l] += (sWalkXdyanmic[lState] - sPrevX[l]) / sTicksPerState;
         sCurrentY[l] += (sWalkY[lState] - sPrevY[l]) / sTicksPerState;
         sCurrentZ[l] += (sWalkZ[lState] - sPrevZ[l]) / sTicksPerState;
         if(sFirstStep && (lState < 5)){
@@ -240,7 +260,7 @@ void moveStaticWalk() {
           sCurrentY[l] = 0; 
         }
       }
-      //Serial.print(sWalkX[lState]); Serial.print("/");
+      //Serial.print(sWalkXdyanmic[lState]); Serial.print("/");
       //Serial.print(sCurrentX[l]); Serial.print(" ");
       //Serial.print(sWalkY[lState]); Serial.print("/");
       //Serial.print(sCurrentY[l]); Serial.print(" ");
