@@ -13,17 +13,17 @@ Adafruit_PWMServoDriver driver = Adafruit_PWMServoDriver(0x40);
 
 LegServo servos[12] = {  // 90 degrees 220 to 420; 
   LegServo(&driver,  0, 300, 90), // Front Right
-  LegServo(&driver,  1, 238, 45),
-  LegServo(&driver,  2, 292, 90),
+  LegServo(&driver,  1, 243, 45),
+  LegServo(&driver,  2, 273, 90),
   LegServo(&driver,  8, 298, 90), // Front Left
-  LegServo(&driver,  9, 345, 135),
-  LegServo(&driver, 10, 290, 90),
+  LegServo(&driver,  9, 333, 135),
+  LegServo(&driver, 10, 300, 90),
   LegServo(&driver,  4, 306, 90), // Back Right
-  LegServo(&driver,  5, 370, 135),
-  LegServo(&driver,  6, 306, 90),
+  LegServo(&driver,  5, 360, 135),
+  LegServo(&driver,  6, 300, 90),
   LegServo(&driver, 12, 310, 90), // Back Left
-  LegServo(&driver, 13, 260, 45),
-  LegServo(&driver, 14, 322, 90)
+  LegServo(&driver, 13, 242, 45),
+  LegServo(&driver, 14, 320, 90)
 };
 
 Leg legs[4] = {
