@@ -5,6 +5,7 @@
 #include <bluefruit.h>
 #include <Adafruit_PWMServoDriver.h>
 #include <Adafruit_LSM6DS33.h>
+#include <Adafruit_Sensor_Calibration.h>
 #include "LegServo.h"
 
 // Servos
@@ -47,6 +48,7 @@ uint8_t robotMsg[1] = {0};
 Adafruit_SH1107 display = Adafruit_SH1107(64, 128, &Wire);
 
 // IMU
+Adafruit_Sensor_Calibration_SDFat cal;
 Adafruit_LSM6DS33 imu;
 sensors_event_t accel;
 sensors_event_t gyro;
@@ -81,11 +83,14 @@ float kneeAngle[4];
 
 void setup() {
   Serial.begin(115200);
+  while (!Serial) yield();
   Serial.println("rdv1");
 
   pinMode(BUTTON_A, INPUT_PULLUP);
   pinMode(BUTTON_B, INPUT_PULLUP);
   pinMode(BUTTON_C, INPUT_PULLUP);
+
+  loadIMUcalibration();
 
   imu.begin_I2C();
 
