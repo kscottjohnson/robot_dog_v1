@@ -72,23 +72,23 @@ void centerServos() {
 
 void moveDemo(){
   
-  Serial.println("--------Demo");
+  //Serial.println("--------Demo");
 
   //map left y axis to z hight
-  Serial.print(ly); Serial.print(" ");
+  //Serial.print(ly); Serial.print(" ");
   float newZ = map(ly, 0, 255, 36, 75);
-  Serial.println(newZ);
+  //Serial.println(newZ);
 
   //map left x axis to y forward/backward
-  Serial.print(lx); Serial.print(" ");
+  //Serial.print(lx); Serial.print(" ");
   float newY = map(lx, 0, 255, 15, -15);
-  Serial.println(newY);
+  //Serial.println(newY);
 
   float newR = 0;
   //map right x axis to roll
-  Serial.print(rx); Serial.print(" ");
+  //Serial.print(rx); Serial.print(" ");
   newR = map(rx, 0, 255, 30, -30);
-  Serial.println(newR);
+  //Serial.println(newR);
 
   float newX = 0;
   //map right x axis to x adjust
@@ -97,9 +97,9 @@ void moveDemo(){
   //Serial.println(newX);
 
   //map right y axis to pitch
-  Serial.print(ry); Serial.print(" ");
+  //Serial.print(ry); Serial.print(" ");
   float newP = map(ry, 0, 255, 20, -20);
-  Serial.println(newP);
+  //Serial.println(newP);
 
   moveLeg(FRONT_RIGHT, newX, newY, newZ, newR, newP, 0);
   moveLeg(FRONT_LEFT , newX, newY, newZ, newR, newP, 0);
@@ -287,22 +287,27 @@ void moveDynamicWalk() {
   Serial.println("--------Dynamic Walk");
 }
 
-
+float ld_x_adj = 0, ld_y_adj = 0;
+float ld_flz, ld_frz, ld_blz, ld_brz;
 void legDemo(){
   
   Serial.println("--------Leg Demo");
 
-  float height = map(ly, 0, 255, 67, 47);
-  moveLeg(FRONT_LEFT, 0, 0, height, 0, 0, 0);
+  // adjust for lean
+  ld_x_adj = smooth(ld_x_adj, constrain(map(ahrs_r, -8, 8, 10, -10), -12, 12), 3);
+  ld_y_adj = smooth(ld_y_adj, constrain(map(ahrs_p, -8, 8, 10, -10), -12, 12), 3);
 
-  height = map(ry, 0, 255, 67, 47);
-  moveLeg(FRONT_RIGHT, 0, 0, height, 0, 0, 0);
+  ld_flz = smooth(ld_flz, map(ly, 0, 255, 67, 47), 10);
+  moveLeg(FRONT_LEFT, ld_x_adj, ld_y_adj, ld_flz, 0, 0, 0);
 
-  height = map(lx, 0, 255, 67, 47);
-  moveLeg(BACK_LEFT, 0, 0, height, 0, 0, 0);
+  ld_frz = smooth(ld_frz, map(ry, 0, 255, 67, 47), 10);
+  moveLeg(FRONT_RIGHT, ld_x_adj, ld_y_adj, ld_frz, 0, 0, 0);
 
-  height = map(rx, 0, 255, 67, 47);
-  moveLeg(BACK_RIGHT, 0, 0, height, 0, 0, 0);
+  ld_blz = smooth(ld_blz, map(lx, 0, 255, 67, 47), 10);
+  moveLeg(BACK_LEFT, ld_x_adj, ld_y_adj, ld_blz, 0, 0, 0);
+
+  ld_brz = smooth(ld_brz, map(rx, 0, 255, 67, 47), 10);
+  moveLeg(BACK_RIGHT, ld_x_adj, ld_y_adj, ld_brz, 0, 0, 0);
   
   
 }

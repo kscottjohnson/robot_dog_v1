@@ -4,6 +4,10 @@
 #include <Adafruit_SH110X.h>
 #include <bluefruit.h>
 #include <Adafruit_PWMServoDriver.h>
+#include <Adafruit_LSM6DS33.h>
+#include <Adafruit_LIS3MDL.h>
+#include <Adafruit_Sensor_Calibration.h>
+#include <Adafruit_AHRS.h>
 #include "LegServo.h"
 
 // Servos
@@ -45,6 +49,24 @@ uint8_t robotMsg[1] = {0};
 // LCD
 Adafruit_SH1107 display = Adafruit_SH1107(64, 128, &Wire);
 
+// IMU
+Adafruit_Sensor_Calibration_SDFat cal;
+Adafruit_LSM6DS33 imu;
+Adafruit_LIS3MDL mdl;
+sensors_event_t accel;
+sensors_event_t gyro;
+sensors_event_t temp;
+sensors_event_t mag; 
+float accel_x, accel_y, accel_z;
+float gyro_x, gyro_y, gyro_z;
+float mag_x, mag_y, mag_z;
+
+// filter
+Adafruit_NXPSensorFusion filter;
+#define FILTER_UPDATE_RATE_HZ 100
+
+float ahrs_r, ahrs_p, ahrs_y;
+
 #define BUTTON_A  9
 #define BUTTON_B  6
 #define BUTTON_C  5
@@ -55,6 +77,7 @@ uint8_t mode = 0; // 0 demo, 1 static walking, 2 dynamic walking
 unsigned long currentMs;
 unsigned long prevMs;
 unsigned long connectedMs;
+unsigned long filterMs;
 
 uint8_t rx, ry, lx, ly;
 bool buttonA, buttonB, buttonC, buttonR, buttonL, buttonAR, buttonBR, buttonCR;
@@ -72,12 +95,18 @@ float kneeAngle[4];
 
 void setup() {
   Serial.begin(115200);
+  while (!Serial) yield();
   Serial.println("rdv1");
 
   pinMode(BUTTON_A, INPUT_PULLUP);
   pinMode(BUTTON_B, INPUT_PULLUP);
   pinMode(BUTTON_C, INPUT_PULLUP);
 
+  setupIMU();
+
+  filter.begin(FILTER_UPDATE_RATE_HZ);
+
+  // start servos
   driver.begin();
   driver.setPWMFreq(SERVO_FREQ);
   
@@ -106,13 +135,21 @@ void loop() {
   if((currentMs - connectedMs) < 1000){ // wait a second after connecting
     return;
   }
+
+  getIMUdata();
+
+  if((currentMs - filterMs) > (1000 / FILTER_UPDATE_RATE_HZ)){
+    updateFilter();
+    filterMs = currentMs;
+  }
+  
   //Serial.print("Mode "); Serial.print(mode);
   if(mode == 0) moveDemo();
   else if(mode == 1) moveStaticWalk();
   else if(mode == 2) legDemo();
 
   //robotBatt = smooth(robotBatt, readBatt(), 10);
-  //getTelemetry();
+  //getRemoteTelemetry();
   //refreshDisplay();
-  //sendTelemetry();
+  //sendRemoteTelemetry();
 }

@@ -69,7 +69,7 @@ void prph_bleuart_rx_callback(uint16_t conn_handle){
   }*/
 }
 
-void sendTelemetry() {
+void sendRemoteTelemetry() {
   if(Bluefruit.Periph.connected()){
     bleuart.write(robotMsg, sizeof(robotMsg));
   }
