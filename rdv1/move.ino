@@ -287,22 +287,27 @@ void moveDynamicWalk() {
   Serial.println("--------Dynamic Walk");
 }
 
-
+float ld_x_adj = 0, ld_y_adj = 0;
+float ld_flz, ld_frz, ld_blz, ld_brz;
 void legDemo(){
   
   Serial.println("--------Leg Demo");
 
-  float height = map(ly, 0, 255, 67, 47);
-  moveLeg(FRONT_LEFT, 0, 0, height, 0, 0, 0);
+  // adjust for lean
+  ld_x_adj = smooth(ld_x_adj, constrain(map(ahrs_r, -8, 8, 10, -10), -12, 12), 3);
+  ld_y_adj = smooth(ld_y_adj, constrain(map(ahrs_p, -8, 8, 10, -10), -12, 12), 3);
 
-  height = map(ry, 0, 255, 67, 47);
-  moveLeg(FRONT_RIGHT, 0, 0, height, 0, 0, 0);
+  ld_flz = smooth(ld_flz, map(ly, 0, 255, 67, 47), 10);
+  moveLeg(FRONT_LEFT, ld_x_adj, ld_y_adj, ld_flz, 0, 0, 0);
 
-  height = map(lx, 0, 255, 67, 47);
-  moveLeg(BACK_LEFT, 0, 0, height, 0, 0, 0);
+  ld_frz = smooth(ld_frz, map(ry, 0, 255, 67, 47), 10);
+  moveLeg(FRONT_RIGHT, ld_x_adj, ld_y_adj, ld_frz, 0, 0, 0);
 
-  height = map(rx, 0, 255, 67, 47);
-  moveLeg(BACK_RIGHT, 0, 0, height, 0, 0, 0);
+  ld_blz = smooth(ld_blz, map(lx, 0, 255, 67, 47), 10);
+  moveLeg(BACK_LEFT, ld_x_adj, ld_y_adj, ld_blz, 0, 0, 0);
+
+  ld_brz = smooth(ld_brz, map(rx, 0, 255, 67, 47), 10);
+  moveLeg(BACK_RIGHT, ld_x_adj, ld_y_adj, ld_brz, 0, 0, 0);
   
   
 }

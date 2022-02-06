@@ -15,7 +15,7 @@ void getIMUdata() {
   mag_x = mag.magnetic.x;
   mag_y = mag.magnetic.y;
   mag_z = mag.magnetic.z;
-  Serial.print("Accel: ");
+  /*Serial.print("Accel: ");
   Serial.print(accel_x);Serial.print(" ");
   Serial.print(accel_y);Serial.print(" ");
   Serial.print(accel_z);
@@ -23,20 +23,20 @@ void getIMUdata() {
   Serial.print("Gyro: ");
   Serial.print(gyro_x);Serial.print(" ");
   Serial.print(gyro_y);Serial.print(" ");
-  Serial.println(gyro_z);
+  Serial.println(gyro_z);*/
 }
 
 void updateFilter(){
   filter.update(gyro_x, gyro_y, gyro_z, 
                 accel_x, accel_y, accel_z, 
                 mag_x, mag_y, mag_z);
-  ahrs_r = filter.getRoll();
-  ahrs_p = filter.getPitch();
+  ahrs_p = filter.getRoll(); // sensor is rotated 90 degrees, so flip roll and pitch
+  ahrs_r = filter.getPitch() * -1;
   ahrs_y = filter.getYaw();
-  Serial.print("AHRS ");
+  /*Serial.print("AHRS ");
   Serial.print(ahrs_r);Serial.print(" ");
   Serial.print(ahrs_p);Serial.print(" ");
-  Serial.println(ahrs_y);
+  Serial.println(ahrs_y);*/
 }
 
 void getRemoteTelemetry() {
@@ -48,7 +48,11 @@ uint8_t readBatt() {
   return (volts * volts * -2.9487 + volts * 25.0447 - 52.1712) * 200;
 }
 
-uint8_t smooth(uint8_t oldValue, uint8_t newValue, uint8_t factor) {
+uint8_t smooth(uint8_t oldValue, uint8_t newValue, uint16_t factor) {
+  return (oldValue * factor + newValue) / (factor + 1);
+}
+
+float smooth(float oldValue, float newValue, uint16_t factor) {
   return (oldValue * factor + newValue) / (factor + 1);
 }
 
