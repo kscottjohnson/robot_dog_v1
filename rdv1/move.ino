@@ -294,8 +294,12 @@ void legDemo(){
   Serial.println("--------Leg Demo");
 
   // adjust for lean
-  ld_x_adj = smooth(ld_x_adj, constrain(map(ahrs_r, -8, 8, 10, -10), -12, 12), 3);
-  ld_y_adj = smooth(ld_y_adj, constrain(map(ahrs_p, -8, 8, 10, -10), -12, 12), 3);
+  pid1_set = 0;
+  pid1_in = ahrs_r;
+  pid1.Compute();
+  ld_x_adj = pid1_out;
+
+  ld_y_adj = 0;
 
   ld_flz = smooth(ld_flz, map(ly, 0, 255, 67, 47), 10);
   moveLeg(FRONT_LEFT, ld_x_adj, ld_y_adj, ld_flz, 0, 0, 0);

@@ -119,3 +119,9 @@ void setupIMU() {
   mdl.setPerformanceMode(LIS3MDL_MEDIUMMODE);
   mdl.setOperationMode(LIS3MDL_CONTINUOUSMODE);
 }
+
+void setupPID(){
+  pid1.SetMode(AUTOMATIC);
+  pid1.SetOutputLimits(-10, 10);
+  pid1.SetSampleTime(10);
+}

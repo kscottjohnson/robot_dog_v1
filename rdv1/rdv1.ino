@@ -8,6 +8,7 @@
 #include <Adafruit_LIS3MDL.h>
 #include <Adafruit_Sensor_Calibration.h>
 #include <Adafruit_AHRS.h>
+#include <PID_v1.h>
 #include "LegServo.h"
 
 // Servos
@@ -64,8 +65,12 @@ float mag_x, mag_y, mag_z;
 // filter
 Adafruit_NXPSensorFusion filter;
 #define FILTER_UPDATE_RATE_HZ 100
-
 float ahrs_r, ahrs_p, ahrs_y;
+
+// PID x adjustment
+const double pid1_p = 1, pid1_i = 0, pid1_d = 0;
+double pid1_in, pid1_out, pid1_set;
+PID pid1(&pid1_in, &pid1_out, &pid1_set, pid1_p, pid1_i, pid1_d, DIRECT);
 
 #define BUTTON_A  9
 #define BUTTON_B  6
@@ -105,6 +110,8 @@ void setup() {
   setupIMU();
 
   filter.begin(FILTER_UPDATE_RATE_HZ);
+
+  setupPID();
 
   // start servos
   driver.begin();
