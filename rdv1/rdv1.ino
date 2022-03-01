@@ -67,10 +67,15 @@ Adafruit_NXPSensorFusion filter;
 #define FILTER_UPDATE_RATE_HZ 100
 float ahrs_r, ahrs_p, ahrs_y;
 
-// PID x adjustment
-const double pid1_p = 1, pid1_i = 0, pid1_d = 0;
-double pid1_in, pid1_out, pid1_set;
-PID pid1(&pid1_in, &pid1_out, &pid1_set, pid1_p, pid1_i, pid1_d, DIRECT);
+// PID roll/x adjustment
+const double pidX_p = 0.5, pidX_i = 0, pidX_d = 0;
+double pidX_in, pidX_out, pidX_set;
+PID pidX(&pidX_in, &pidX_out, &pidX_set, pidX_p, pidX_i, pidX_d, DIRECT);
+
+// PID pitch/y adjustment
+const double pidY_p = 0.2, pidY_i = 0, pidY_d = 0;
+double pidY_in, pidY_out, pidY_set;
+PID pidY(&pidY_in, &pidY_out, &pidY_set, pidY_p, pidY_i, pidY_d, DIRECT);
 
 #define BUTTON_A  9
 #define BUTTON_B  6
@@ -100,7 +105,7 @@ float kneeAngle[4];
 
 void setup() {
   Serial.begin(115200);
-  while (!Serial) yield();
+  //while (!Serial) yield();
   Serial.println("rdv1");
 
   pinMode(BUTTON_A, INPUT_PULLUP);
@@ -123,7 +128,7 @@ void setup() {
   centerServos();
   
   startBleAdv();
-
+  delay(500);
   //robotBatt = readBatt();
   
   prevMs = millis();
@@ -137,6 +142,7 @@ void loop() {
   if(! Bluefruit.Periph.connected()){
     Serial.println("Not Connected");
     centerServos();
+    delay(1000);
     return;
   }
   if((currentMs - connectedMs) < 1000){ // wait a second after connecting
@@ -152,7 +158,8 @@ void loop() {
   
   //Serial.print("Mode "); Serial.print(mode);
   if(mode == 0) moveDemo();
-  else if(mode == 1) moveStaticWalk();
+  //else if(mode == 1) moveStaticWalk();
+  else if(mode == 1) moveDynamicMarch();
   else if(mode == 2) legDemo();
 
   //robotBatt = smooth(robotBatt, readBatt(), 10);

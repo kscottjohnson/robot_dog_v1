@@ -283,35 +283,37 @@ void moveStaticWalk() {
   }
 }
 
-void moveDynamicWalk() {
-  Serial.println("--------Dynamic Walk");
-}
-
 float ld_x_adj = 0, ld_y_adj = 0;
 float ld_flz, ld_frz, ld_blz, ld_brz;
+float lx_x_offset = 0; //narrow stance
+
 void legDemo(){
   
   Serial.println("--------Leg Demo");
 
-  // adjust for lean
-  pid1_set = 0;
-  pid1_in = ahrs_r;
-  pid1.Compute();
-  ld_x_adj = pid1_out;
+  // adjust for roll
+  pidX_set = 0;
+  pidX_in = ahrs_r;
+  pidX.Compute();
+  ld_x_adj = pidX_out;
 
-  ld_y_adj = 0;
+  // adjust for pitch
+  pidY_set = 0;
+  pidY_in = ahrs_p;
+  pidY.Compute();
+  ld_y_adj = pidY_out;
 
-  ld_flz = smooth(ld_flz, map(ly, 0, 255, 67, 47), 10);
-  moveLeg(FRONT_LEFT, ld_x_adj, ld_y_adj, ld_flz, 0, 0, 0);
+  ld_flz = smooth(ld_flz, map(ly, 0, 255, 67, 47), 3);
+  moveLeg(FRONT_LEFT, ld_x_adj + lx_x_offset, ld_y_adj, ld_flz -(0.1*ld_x_adj), 0, 0, 0);
 
-  ld_frz = smooth(ld_frz, map(ry, 0, 255, 67, 47), 10);
-  moveLeg(FRONT_RIGHT, ld_x_adj, ld_y_adj, ld_frz, 0, 0, 0);
+  ld_frz = smooth(ld_frz, map(ry, 0, 255, 67, 47), 3);
+  moveLeg(FRONT_RIGHT, ld_x_adj - lx_x_offset, ld_y_adj, ld_frz +(0.1*ld_x_adj), 0, 0, 0);
 
-  ld_blz = smooth(ld_blz, map(lx, 0, 255, 67, 47), 10);
-  moveLeg(BACK_LEFT, ld_x_adj, ld_y_adj, ld_blz, 0, 0, 0);
+  //ld_blz = smooth(ld_blz, map(lx, 0, 255, 67, 47), 3);
+  moveLeg(BACK_LEFT, ld_x_adj + lx_x_offset, ld_y_adj, ld_frz -(0.1*ld_x_adj), 0, 0, 0);
 
-  ld_brz = smooth(ld_brz, map(rx, 0, 255, 67, 47), 10);
-  moveLeg(BACK_RIGHT, ld_x_adj, ld_y_adj, ld_brz, 0, 0, 0);
+  //ld_brz = smooth(ld_brz, map(rx, 0, 255, 67, 47), 3);
+  moveLeg(BACK_RIGHT, ld_x_adj - lx_x_offset, ld_y_adj, ld_flz +(0.1*ld_x_adj), 0, 0, 0);
   
   
 }

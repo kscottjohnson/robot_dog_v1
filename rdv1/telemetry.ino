@@ -121,7 +121,11 @@ void setupIMU() {
 }
 
 void setupPID(){
-  pid1.SetMode(AUTOMATIC);
-  pid1.SetOutputLimits(-10, 10);
-  pid1.SetSampleTime(10);
+  pidX.SetMode(AUTOMATIC);
+  pidX.SetOutputLimits(-18, 18);
+  pidX.SetSampleTime(10);
+
+  pidY.SetMode(AUTOMATIC);
+  pidY.SetOutputLimits(-18, 18);
+  pidY.SetSampleTime(10);
 }
